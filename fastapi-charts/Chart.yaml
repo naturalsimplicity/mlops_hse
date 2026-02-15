@@ -1,0 +1,16 @@
+apiVersion: v2
+name: fastapi-chart
+description: A Helm chart for FastAPI Hello World application
+type: application
+version: 0.1.0
+appVersion: "v2"
+keywords:
+  - fastapi
+  - python
+  - web
+maintainers:
+  - name: Your Name
+    email: your.email@example.com
+home: https://github.com/yourusername/fastapi-chart
+sources:
+  - https://github.com/yourusername/fastapi-chart

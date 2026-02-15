@@ -1,0 +1,87 @@
+# Настройки образа
+image:
+  repository: yourusername/fastapi-hello
+  pullPolicy: IfNotPresent
+  # Можно переопределить версию образа
+  tag: "v2"
+
+# Количество реплик
+replicaCount: 2
+
+# Настройки Service
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+# Настройки Ingress
+ingress:
+  enabled: true  # Можно отключить генерацию Ingress
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  hosts:
+    - host: fastapi.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  # - secretName: fastapi-tls
+  #   hosts:
+  #     - fastapi.local
+
+# Настройки ресурсов
+resources:
+  enabled: true  # Можно отключить лимиты
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
+
+# Health checks
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /ready
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 3
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+startupProbe:
+  enabled: true
+  httpGet:
+    path: /startup
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  failureThreshold: 10
+
+# Метки для подов
+podLabels: {}
+
+# Аннотации для подов
+podAnnotations: {}
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}

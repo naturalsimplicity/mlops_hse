@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: yourusername/fastapi-hello
+  tag: "v2"
+
+resources:
+  enabled: false  # Отключаем лимиты
+
+ingress:
+  enabled: false  # Отключаем Ingress
+
+service:
+  type: NodePort

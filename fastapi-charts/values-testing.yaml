@@ -1,0 +1,29 @@
+replicaCount: 2
+
+image:
+  repository: yourusername/fastapi-hello
+  tag: "v1"  # Старая версия для тестов
+
+resources:
+  enabled: true
+  limits:
+    cpu: 100m
+    memory: 64Mi
+  requests:
+    cpu: 50m
+    memory: 32Mi
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: fastapi-test.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+livenessProbe:
+  enabled: false  # Отключаем для отладки
+
+readinessProbe:
+  enabled: false

@@ -1,0 +1,28 @@
+replicaCount: 3
+
+image:
+  repository: yourusername/fastapi-hello
+  tag: "v2"
+
+resources:
+  enabled: true
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 200m
+    memory: 128Mi
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: fastapi-prod.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8000"
+  prometheus.io/path: "/metrics"
