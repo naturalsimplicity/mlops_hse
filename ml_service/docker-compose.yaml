@@ -1,0 +1,6 @@
+services:
+  diabets-ml-service:
+    build: .
+    container_name: diabets-ml-service
+    ports:
+      - "8000:8000"
