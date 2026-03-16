@@ -1,46 +1,48 @@
 services:
-  db:
+  postgres:
     image: postgres:16-alpine
-    container_name: mlflow-db
+    container_name: mlflow_postgres
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_USER:     ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB:       ${POSTGRES_DB}
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 20
+      retries: 5
+      start_period: 10s
+    networks:
+      - mlflow_net
 
   mlflow:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mlflow-server
+    container_name: mlflow_server
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     env_file:
       - .env
-    volumes:
-      - mlruns:/mlruns
+    user: "mlflow"
     ports:
-      - "5000:5000"
-    command: >
-      mlflow server
-      --host 0.0.0.0
-      --port 5000
-      --backend-store-uri ${MLFLOW_BACKEND_STORE_URI}
-      --default-artifact-root ${MLFLOW_DEFAULT_ARTIFACT_ROOT}
+      - "${MLFLOW_PORT:-5000}:5000"
+    volumes:
+      - mlflow_artifacts:/mlflow/artifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mlflow_net
 
 volumes:
-  pgdata:
-  mlruns:
+  postgres_data:
+    driver: local
+  mlflow_artifacts:
+    driver: local
+
+networks:
+  mlflow_net:
+    driver: bridge

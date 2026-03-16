@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fastapi-service
+  name: diabetes-mlservice
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
-    app: fastapi
+    app: diabetes-mlservice
   ports:
-    - protocol: TCP
-      port: 80
+    - name: http
+      port: 8000
       targetPort: 8000
+      nodePort: 31110
