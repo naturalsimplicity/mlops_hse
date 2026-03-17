@@ -13,5 +13,18 @@ minikube image load diabetes-mlservice:latest
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 kubectl apply -f ingress.yaml
-kubectl port-forward svc/diabetes-mlservice 8110:80
+kubectl port-forward svc/diabetes-mlservice 8000:8000
+```
+
+## Set Hosts
+
+```shell
+sudo nano /etc/hosts
+192.168.49.2 diabetes.local
+```
+
+## Helm Charts
+
+```shell
+helm create diabetes-ml-chart
 ```

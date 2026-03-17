@@ -15,7 +15,7 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets:
-          - '158.160.184.127:8110'
+          - '158.160.228.178:8110'
         labels:
           service: 'ml'
           env: 'prod'
