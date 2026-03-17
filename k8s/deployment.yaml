@@ -1,40 +1,65 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fastapi-deployment
+  name: diabetes-ml-service
   labels:
-    app: fastapi
+    app: diabetes-ml-service
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: fastapi
+      app: diabetes-ml-service
   template:
     metadata:
       labels:
-        app: fastapi
+        app: diabetes-ml-service
     spec:
       containers:
-      - name: fastapi
-        image: yourusername/fastapi-hello:v1
-        ports:
-        - containerPort: 8000
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "100m"
-          limits:
-            memory: "128Mi"
-            cpu: "200m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 3
+        - name: diabetes-ml-service
+          image: diabetes-mlservice:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+
+          env:
+            - name: MLFLOW_TRACKING_URI
+              value: "http://158.160.228.178:5000"
+            - name: MLFLOW_MODEL_NAME
+              value: "diabets"
+            - name: MLFLOW_MODEL_VERSION
+              value: "3"
+
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 30
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

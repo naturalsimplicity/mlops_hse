@@ -1,0 +1,29 @@
+services:
+  jupyterhub:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jupyterhub
+    ports:
+      - "8100:8100"
+      - "8101:8101"
+    environment:
+      - JUPYTERHUB_CRYPT_KEY=${JUPYTERHUB_CRYPT_KEY}
+      - JUPYTERHUB_COOKIE_SECRET=${JUPYTERHUB_COOKIE_SECRET}
+      - JUPYTERHUB_PORT=8100
+      - JUPYTERHUB_HUB_PORT=8101
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
+    volumes:
+      - ./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py:ro
+      - jupyterhub-data:/srv/jupyterhub/data
+    networks:
+      - jupyterhub-network
+    restart: unless-stopped
+    user: root
+
+volumes:
+  jupyterhub-data:
+
+networks:
+  jupyterhub-network:
+    driver: bridge
